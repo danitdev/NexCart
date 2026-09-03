@@ -1,6 +1,6 @@
 import {Request,Response,NextFunction} from "express";
 
-import {getCategoriesService,getCategoryService,postCategoryService, updateCategoryService} from "./categoryService.js";
+import {deleteCategoryService, getCategoriesService,getCategoryService,postCategoryService, updateCategoryService} from "./categoryService.js";
 import ca from "zod/v4/locales/ca.cjs";
 import { AppError } from "../../errors/AppError.js";
 
@@ -67,6 +67,25 @@ export const updateCategory = async(
             const categoryUpdName = req.body.name;
             const updatedCategory = await updateCategoryService(categoryId,categoryUpdName);
             res.json({category:updatedCategory,msg:"updated the category!"});
+        }
+        catch(err){
+            if(err instanceof AppError){
+                if(!err.statusCode){
+                    err.statusCode = 500;
+                }
+            }
+            next(err);
+        }
+};
+
+export const deleteCategory = async(
+        req:Request,
+    res:Response,
+    next:NextFunction)=>{
+        try{
+            const categoryId = Number(req.params.id);
+            await deleteCategoryService(categoryId);
+            res.json({msg:"deleted the category!"});
         }
         catch(err){
             if(err instanceof AppError){
