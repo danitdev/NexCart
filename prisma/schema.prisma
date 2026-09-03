@@ -6,3 +6,26 @@ generator client {
 datasource db {
   provider = "mysql"
 }
+
+enum Role{
+  USER
+  ADMIN
+}
+
+enum OrderStatus{
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+model User{
+  id Int @id @default(autoincrement())
+  name String?
+  email String @unique
+  password String
+  role Role @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+}
