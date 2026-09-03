@@ -11,3 +11,11 @@ export const postCategoryService = async(categoryName:string)=>{
     return category;
 
 }
+
+export const getCategoryService = async(categoryId:number)=>{
+    const category =  await prisma.category.findUnique({where:{id:categoryId}});
+    if(!category){
+        throw new Error("This Shit doesn't exist!");
+    }
+    return category;
+}
