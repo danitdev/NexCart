@@ -1,7 +1,5 @@
 import {Request,Response,NextFunction} from "express";
-
 import {deleteCategoryService, getCategoriesService,getCategoryService,postCategoryService, updateCategoryService} from "./categoryService.js";
-import ca from "zod/v4/locales/ca.cjs";
 import { AppError } from "../../errors/AppError.js";
 
 
@@ -13,8 +11,13 @@ export const getCategories = async(
         try{
 
             const categories = await getCategoriesService();
-            res.json({categories:categories});
+            res.status(200).json({categories:categories});
         }catch(err){
+            if(err instanceof AppError){
+                if(!err.statusCode){
+                    err.statusCode = 500;
+                }
+            }
             next(err);
         }
 
@@ -27,7 +30,7 @@ export const postCategory = async(
         try{
             const name = req.body.name;
             const category = await postCategoryService(name);
-            res.json({category:category,msg:"the category is created!"});
+            res.status(201).json({category:category,msg:"the category is created!"});
         }catch(err){
             if(err instanceof AppError){
                 if(!err.statusCode){
@@ -45,7 +48,7 @@ export const getCategory = async(
         try{
             const categoryId = Number(req.params.id);
             const category = await getCategoryService(categoryId);
-            res.json({category:category,msg:"found the category!"});
+            res.status(200).json({category:category,msg:"found the category!"});
 
         }
         catch(err){
@@ -66,7 +69,7 @@ export const updateCategory = async(
             const categoryId = Number(req.params.id);
             const categoryUpdName = req.body.name;
             const updatedCategory = await updateCategoryService(categoryId,categoryUpdName);
-            res.json({category:updatedCategory,msg:"updated the category!"});
+            res.status(200).json({category:updatedCategory,msg:"updated the category!"});
         }
         catch(err){
             if(err instanceof AppError){
@@ -85,7 +88,7 @@ export const deleteCategory = async(
         try{
             const categoryId = Number(req.params.id);
             await deleteCategoryService(categoryId);
-            res.json({msg:"deleted the category!"});
+            res.status(204).json({msg:"deleted the category!"});
         }
         catch(err){
             if(err instanceof AppError){
