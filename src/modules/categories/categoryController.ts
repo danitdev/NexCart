@@ -1,7 +1,8 @@
 import {Request,Response,NextFunction} from "express";
 
-import {getCategoriesService,getCategoryService,postCategoryService} from "./categoryService.js";
+import {getCategoriesService,getCategoryService,postCategoryService, updateCategoryService} from "./categoryService.js";
 import ca from "zod/v4/locales/ca.cjs";
+import { AppError } from "../../errors/AppError.js";
 
 
 
@@ -17,7 +18,7 @@ export const getCategories = async(
             next(err);
         }
 
-}
+};
 
 export const postCategory = async(
     req:Request,
@@ -28,11 +29,14 @@ export const postCategory = async(
             const category = await postCategoryService(name);
             res.json({category:category,msg:"the category is created!"});
         }catch(err){
+            if(err instanceof AppError){
+                if(!err.statusCode){
+                    err.statusCode = 500;
+                }
+            }
             next(err);
         }
-
-
-}
+};
 
 export const getCategory = async(
     req:Request,
@@ -45,6 +49,31 @@ export const getCategory = async(
 
         }
         catch(err){
-
+            if(err instanceof AppError){
+                if(!err.statusCode){
+                    err.statusCode = 500;
+                }
+            }
+            next(err);
         }
-}
+};
+
+export const updateCategory = async(
+    req:Request,
+    res:Response,
+    next:NextFunction)=>{
+        try{
+            const categoryId = Number(req.params.id);
+            const categoryUpdName = req.body.name;
+            const updatedCategory = await updateCategoryService(categoryId,categoryUpdName);
+            res.json({category:updatedCategory,msg:"updated the category!"});
+        }
+        catch(err){
+            if(err instanceof AppError){
+                if(!err.statusCode){
+                    err.statusCode = 500;
+                }
+            }
+            next(err);
+        }
+};
