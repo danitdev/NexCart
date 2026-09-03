@@ -17,6 +17,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@prisma/adapter-mariadb": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
