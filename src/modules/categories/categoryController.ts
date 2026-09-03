@@ -1,6 +1,6 @@
 import {Request,Response,NextFunction} from "express";
 
-import {getCategoriesService} from "./categoryService.js";
+import {getCategoriesService,postCategoryService} from "./categoryService.js";
 
 
 
@@ -15,5 +15,20 @@ export const getCategories = async(
         }catch(err){
             next(err);
         }
+
+}
+
+export const postCategory = async(
+        req:Request,
+    res:Response,
+    next:NextFunction)=>{
+        try{
+            const name = req.body.name;
+            const category = await postCategoryService(name);
+            res.json({category:category,msg:"the category is created!"});
+        }catch(err){
+            next(err);
+        }
+
 
 }
