@@ -34,3 +34,15 @@ export const updateCategoryService = async(categoryId:number,categoryName:string
         throw error;
     }
 }
+
+export const deleteCategoryService = async(categoryId:number)=>{
+    try{
+        await prisma.category.delete({where:{id:categoryId}});
+    }
+    catch(error){
+        if(error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025"){
+            throw new AppError("Category not found.",404);
+        }
+        throw error;
+    }
+}
