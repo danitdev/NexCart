@@ -1,6 +1,7 @@
 import {Request,Response,NextFunction} from "express";
 
-import {getCategoriesService,postCategoryService} from "./categoryService.js";
+import {getCategoriesService,getCategoryService,postCategoryService} from "./categoryService.js";
+import ca from "zod/v4/locales/ca.cjs";
 
 
 
@@ -19,7 +20,7 @@ export const getCategories = async(
 }
 
 export const postCategory = async(
-        req:Request,
+    req:Request,
     res:Response,
     next:NextFunction)=>{
         try{
@@ -31,4 +32,19 @@ export const postCategory = async(
         }
 
 
+}
+
+export const getCategory = async(
+    req:Request,
+    res:Response,
+    next:NextFunction)=>{
+        try{
+            const categoryId = Number(req.params.id);
+            const category = await getCategoryService(categoryId);
+            res.json({category:category,msg:"found the category!"});
+
+        }
+        catch(err){
+
+        }
 }
