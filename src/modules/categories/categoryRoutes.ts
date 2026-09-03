@@ -1,12 +1,12 @@
 import {Router} from "express";
-import {getCategories, getCategory, postCategory} from "./categoryController.js";
+import {getCategories, getCategory, postCategory, updateCategory} from "./categoryController.js";
 
 const router = Router();
 
 router.get("/",getCategories);
 router.get("/:id",getCategory);
 router.post("/",postCategory);
-// router.patch("/:id",)
+router.patch("/:id",updateCategory);
 // router.delete("/:id");
 
 
