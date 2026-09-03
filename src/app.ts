@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import categoryRouter from "./modules/categories/categoryRoutes.js";
+import productRouter from "./modules/products/productRoutes.js";
 import { AppError } from "./errors/AppError.js";
 
 
@@ -10,6 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/categories",categoryRouter);
+app.use("/products",productRouter);
 
 app.use((error:AppError,req:express.Request,res:express.Response,next:express.NextFunction)=>{
     const errStatus = error.statusCode;
