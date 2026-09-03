@@ -28,7 +28,7 @@ model User{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  
+  cart Cart?
 
 }
 
@@ -38,7 +38,7 @@ model Cart{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
   items CartItem[]
 }
 
@@ -78,3 +78,4 @@ model Category{
 
   products Product[]
 }
+
