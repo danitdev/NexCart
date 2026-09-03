@@ -53,3 +53,4 @@ temp/
 # Misc
 *.swp
 *.swo
+/src/generated/prisma
