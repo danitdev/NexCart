@@ -3,7 +3,10 @@ import cors from "cors";
 
 import categoryRouter from "./modules/categories/categoryRoutes.js";
 import productRouter from "./modules/products/productRoutes.js";
+import authRouter from "./modules/auth/authRoutes.js";
 import { AppError } from "./errors/AppError.js";
+
+
 
 const app = express();
 
@@ -15,6 +18,7 @@ app.use(express.json());
 // Routes
 app.use("/categories", categoryRouter);
 app.use("/products", productRouter);
+app.use("/auth",authRouter);
 
 // Error handling — keep this LAST
 app.use(
