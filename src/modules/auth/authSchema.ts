@@ -15,6 +15,9 @@ export const createUserSchema = z.object({
         path:["confirmPassword"]
     }
 )
-
-
+export const loginUserSchema = z.object({
+    email: z.email().trim().toLowerCase(),
+    password: z.string().min(8).max(255)
+});
 export type CreateUserInput = z.infer<typeof createUserSchema>;
+export type LoginUserInput = z.infer<typeof loginUserSchema>;
