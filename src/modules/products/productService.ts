@@ -34,6 +34,19 @@ export const patchProductService = async(productId:number,data:UpdateProductInpu
             },
             data:data
         });
+        return updatedProduct;
+    }catch(error){
+        if(error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025"){
+            throw new AppError("Product not found.",404);
+        }
+        throw error;
+    }
+}
+
+export const deleteProductService = async(productId:number)=>{
+    try{
+        // TODO: after writing cruds for reviews delete reviews on deleteProductService also
+        await prisma.product.delete({where:{id:productId}});
     }catch(error){
         if(error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025"){
             throw new AppError("Product not found.",404);
