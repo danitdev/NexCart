@@ -1,10 +1,11 @@
 import {prisma} from "../../lib/prisma.js";
 import {AppError} from "../../errors/AppError.js";
 import {Prisma} from "../../generated/prisma/client.js";
-import {CreateUserInput} from "./authSchema.js";
+import {CreateUserInput,LoginUserInput} from "./authSchema.js";
 import argon2 from "argon2";
+import {generateToken} from "../../utils/auth.js";
 
-export const signup_user = async(data:CreateUserInput)=>{
+export const signupUserService = async(data:CreateUserInput)=>{
     const hashedPass = await argon2.hash(data.password,
         {
             type: argon2.argon2id,
@@ -26,4 +27,19 @@ export const signup_user = async(data:CreateUserInput)=>{
             }
         throw error;
     }
+}
+export const loginUserService = async(data:LoginUserInput)=>{
+    let loadedUser = await prisma.user.findUnique({where:{email:data.email}});
+    let token;
+    if(!loadedUser || !loadedUser.password){
+        throw new AppError("Invalid email or password",401);
+    }
+    const isValid = await argon2.verify(loadedUser.password,data.password);
+    if(!isValid){
+        throw new AppError("Invalid email or password",401);
+    }
+    let userId = loadedUser.id;
+    generateToken(userId,loadedUser.email);
+    //returning token and user id
+    return {token,userId};
 }
