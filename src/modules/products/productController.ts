@@ -1,7 +1,7 @@
 import {Request,Response,NextFunction} from "express";
-import { getProductService, getProductsService, postProductService } from "./productService.js";
+import { getProductService, getProductsService, patchProductService, postProductService } from "./productService.js";
 import { AppError } from "../../errors/AppError.js";
-import {CreateProducInput} from "./productSchema.js";
+import {CreateProducInput,UpdateProductInput} from "./productSchema.js";
 
 
 export const getProcuts = async(
@@ -55,6 +55,24 @@ export const postProduct = async(
             // TODO: uploading the image and set the image url
             const product = await postProductService(data);
             res.status(201).json({product,msg:"product created."});
+        }catch(err){
+            if(err instanceof AppError){
+                if(!err.statusCode){
+                    err.statusCode = 500;
+                }
+            }
+            next(err);
+        }
+}
+export const patchProduct = async(
+    req:Request,
+    res:Response,
+    next:NextFunction)=>{
+        try{
+            const productId = req.body.id;
+            const data:UpdateProductInput = req.body;
+            const product = await patchProductService(productId,data);
+            res.status(200).json({product,msg:"product updated."});
         }catch(err){
             if(err instanceof AppError){
                 if(!err.statusCode){
