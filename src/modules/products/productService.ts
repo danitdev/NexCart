@@ -1,7 +1,7 @@
 import {prisma} from "../../lib/prisma.js";
 import {AppError} from "../../errors/AppError.js";
 import {Prisma} from "../../generated/prisma/client.js";
-import {CreateProducInput} from "./productSchema.js";
+import {CreateProducInput,UpdateProductInput} from "./productSchema.js";
 
 export const getProductsService = async()=>{
     return await prisma.product.findMany();
@@ -24,4 +24,20 @@ export const postProductService = async(data:CreateProducInput)=>{
         stock: data.stock
     }});
     return product;
+}
+
+export const patchProductService = async(productId:number,data:UpdateProductInput)=>{
+    try{
+        const updatedProduct = await prisma.product.update({
+            where:{
+                id:productId
+            },
+            data:data
+        });
+    }catch(error){
+        if(error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025"){
+            throw new AppError("Product not found.",404);
+        }
+        throw error;
+    }
 }
