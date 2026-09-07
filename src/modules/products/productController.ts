@@ -1,5 +1,5 @@
 import {Request,Response,NextFunction} from "express";
-import { getProductService, getProductsService, patchProductService, postProductService } from "./productService.js";
+import { deleteProductService, getProductService, getProductsService, patchProductService, postProductService } from "./productService.js";
 import { AppError } from "../../errors/AppError.js";
 import {CreateProducInput,UpdateProductInput} from "./productSchema.js";
 
@@ -69,10 +69,28 @@ export const patchProduct = async(
     res:Response,
     next:NextFunction)=>{
         try{
-            const productId = req.body.id;
+            const productId = Number(req.params.id);
             const data:UpdateProductInput = req.body;
             const product = await patchProductService(productId,data);
-            res.status(200).json({product,msg:"product updated."});
+            res.status(200).json({product:product,msg:"product updated."});
+        }catch(err){
+            if(err instanceof AppError){
+                if(!err.statusCode){
+                    err.statusCode = 500;
+                }
+            }
+            next(err);
+        }
+}
+
+export const deleteProduct = async(
+    req:Request,
+    res:Response,
+    next:NextFunction)=>{
+        try{
+            const productId = Number(req.params.id);
+            await deleteProductService(productId);
+            res.status(200).json({msg:"product deleted."});
         }catch(err){
             if(err instanceof AppError){
                 if(!err.statusCode){
