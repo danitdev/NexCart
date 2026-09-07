@@ -89,7 +89,7 @@ export const deleteCategory = async(
         try{
             const categoryId = parseId(req.params.id);
             await deleteCategoryService(categoryId);
-            res.status(204).json({msg:"deleted the category!"});
+            res.status(200).json({msg:"deleted the category!"});
         }
         catch(err){
             if(err instanceof AppError){
