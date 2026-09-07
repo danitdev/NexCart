@@ -62,8 +62,9 @@ export const postProduct = async(
     next:NextFunction)=>{
         try{
             const data:CreateProducInput = req.body;
+
             // TODO: uploading the image and set the image url
-            const product = await postProductService(data);
+            const product = await postProductService(data,req.file?.filename);
             res.status(201).json({product,msg:"product created."});
         }catch(err){
             if(err instanceof AppError){
