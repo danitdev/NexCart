@@ -12,7 +12,7 @@ export const createProductSchema = z.object({
 
 export const updateProductSchema = z.object({
     price: z.number().nonnegative().max(99999999.99).multipleOf(0.01).optional(),
-    name: z.string().trim().min(1).max(255).optional(),
+    name: z.string().trim().max(255).optional(),
     description: z.string().trim().max(2000).optional(),
     stock: z.number().int().nonnegative().optional(),
     imageUrl: z.string().url().optional(),
