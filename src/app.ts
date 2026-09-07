@@ -5,12 +5,39 @@ import categoryRouter from "./modules/categories/categoryRoutes.js";
 import productRouter from "./modules/products/productRoutes.js";
 import authRouter from "./modules/auth/authRoutes.js";
 import { AppError } from "./errors/AppError.js";
+import multer from "multer";
+import __root_dir from "./utils/path.js";
+import path from "node:path";
 
 
+const fileStorage = multer.diskStorage({
+  destination:(req,file,cb)=>{
+    cb(null,"images");
+  },
+  filename:(req,file,cb)=>{
+    cb(null,Date.now()+"-"+file.originalname);
+  }
+});
+const fileFilter = (req:Express.Request,file:Express.Multer.File,cb:multer.FileFilterCallback)=>{
+    if(file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg"){
+        cb(null,true);
+    }
+    else{
+        cb(null,false);
+    }
+}
+
+//the field name for the file is image
+const upload = multer({storage:fileStorage,fileFilter}).single("image");
 
 const app = express();
 
-app.use(cors());
+app.use(upload);
+app.use("/images",express.static(path.join(__root_dir,"/images")));
+
+app.use(cors({
+  // origin:"the frontend address"
+}));
 app.use(express.json());
 
 
