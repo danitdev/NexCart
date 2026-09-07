@@ -6,8 +6,21 @@ import {CreateProducInput,UpdateProductInput} from "./productSchema.js";
 export const getProductsService = async()=>{
     return await prisma.product.findMany();
 }
+export const getProductsAvailableService = async()=>{
+    return await prisma.product.findMany({where:{
+        stock:{
+            gt:0
+        }
+    }});
+}
 export const getProductService = async(productId:number)=>{
-    const product = await prisma.product.findUnique({where:{id:productId}});
+    const product = await prisma.product.findUnique(
+        {
+            where:
+            {
+                id:productId,
+            }
+        });
     if(!product){
         throw new AppError("this product doesn't exist",404);
     }
