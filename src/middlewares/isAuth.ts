@@ -21,10 +21,10 @@ export const isAuth = (
             new AppError("Authentication required.", 401)
         );
     }
-    const token = authHeader.split(" ")[1];
-    if (!token) {
+    const [scheme,token] = authHeader.split(" ");
+    if (scheme !== "Bearer" ||!token) {
         return next(
-            new AppError("Authentication required.", 401)
+            new AppError("Invalid authorization header.", 401)
         );
     }
     try {
