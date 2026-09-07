@@ -1,6 +1,6 @@
 import type {Request,Response,NextFunction} from "express";
-import {signup_user} from "./authService.js";
-import {CreateUserInput} from "./authSchema.js";
+import {loginUserService, signupUserService} from "./authService.js";
+import {CreateUserInput,LoginUserInput} from "./authSchema.js";
 import {AppError} from "../../errors/AppError.js";
 
 export const signUp = async(
@@ -9,7 +9,7 @@ export const signUp = async(
     next:NextFunction)=>{
         try{
             const data:CreateUserInput = req.body;
-            const user = await signup_user(data);
+            const user = await signupUserService(data);
             res.status(201).json({user,msg:"user created!"})
         }catch(err){
             if(err instanceof AppError){
@@ -21,3 +21,20 @@ export const signUp = async(
         }
 }
 
+export const login = async(
+    req:Request,
+    res:Response,
+    next:NextFunction)=>{
+        try{   
+            const data:LoginUserInput = req.body;
+            const {token,userId} = await loginUserService(data);
+            res.status(200).json({token,userId}); 
+        }catch(err){
+            if(err instanceof AppError){
+                if(!err.statusCode){
+                    err.statusCode = 500;
+                }
+            }
+            next(err);
+        }
+}
