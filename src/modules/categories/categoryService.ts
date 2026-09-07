@@ -7,10 +7,17 @@ export const getCategoriesService = async()=>{
 }
 
 export const postCategoryService = async(categoryName:string)=>{
-    const category = await prisma.category.create({data:{
-        name: categoryName
-    }});
-    return category;
+    try{
+        const category = await prisma.category.create({data:{
+            name: categoryName
+        }});
+        return category;
+    }catch(err){
+        if(err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002"){
+            throw new AppError("Category already exists.",409);
+        }
+        throw err;
+    }
 
 }
 
