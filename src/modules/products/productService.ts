@@ -27,7 +27,7 @@ export const getProductService = async(productId:number)=>{
     return product;
 }
 
-export const postProductService = async(data:CreateProducInput)=>{
+export const postProductService = async(data:CreateProducInput,filename?:string)=>{
     const category = await prisma.category.findUnique({
         where: {
             id: data.categoryId
@@ -37,14 +37,11 @@ export const postProductService = async(data:CreateProducInput)=>{
     if (!category) {
         throw new AppError("Category not found.", 404);
     }
-    const product = await prisma.product.create({data:{
-        name:data.name,
-        price:data.price,
-        categoryId:data.categoryId,
-        description:data.description,
-        imageUrl:"/test-URL",  // TODO: have to make the products be able to upload some
-        stock: data.stock
-    }});
+    const product = await prisma.product.create({
+        data:{
+            ...data,
+            imageUrl: filename? `/images/${filename}` : undefined
+        }});
     return product;
 }
 
