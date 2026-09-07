@@ -50,6 +50,17 @@ export const postProductService = async(data:CreateProducInput)=>{
 
 export const patchProductService = async(productId:number,data:UpdateProductInput)=>{
     try{
+        if(data.categoryId !== undefined){
+            const category = await prisma.category.findUnique({
+            where: {
+                id: data.categoryId
+            }
+            });
+            //check for categoryId passed from admin
+            if (!category) {
+                throw new AppError("Category not found.", 404);
+            }
+        }
         const updatedProduct = await prisma.product.update({
             where:{
                 id:productId
