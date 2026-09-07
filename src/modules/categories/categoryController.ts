@@ -1,7 +1,8 @@
 import {Request,Response,NextFunction} from "express";
 import {deleteCategoryService, getCategoriesService,getCategoryService,postCategoryService, updateCategoryService} from "./categoryService.js";
 import { AppError } from "../../errors/AppError.js";
-
+import {parseId} from "../../utils/parseId.js";
+import { parse } from "dotenv";
 
 
 export const getCategories = async(
@@ -46,7 +47,7 @@ export const getCategory = async(
     res:Response,
     next:NextFunction)=>{
         try{
-            const categoryId = Number(req.params.id);
+            const categoryId = parseId(req.params.id);
             const category = await getCategoryService(categoryId);
             res.status(200).json({category:category,msg:"found the category!"});
 
@@ -66,7 +67,7 @@ export const updateCategory = async(
     res:Response,
     next:NextFunction)=>{
         try{
-            const categoryId = Number(req.params.id);
+            const categoryId = parseId(req.params.id);
             const categoryUpdName = req.body.name;
             const updatedCategory = await updateCategoryService(categoryId,categoryUpdName);
             res.status(200).json({category:updatedCategory,msg:"updated the category!"});
@@ -86,7 +87,7 @@ export const deleteCategory = async(
     res:Response,
     next:NextFunction)=>{
         try{
-            const categoryId = Number(req.params.id);
+            const categoryId = parseId(req.params.id);
             await deleteCategoryService(categoryId);
             res.status(204).json({msg:"deleted the category!"});
         }
