@@ -28,10 +28,19 @@ export const getProductService = async(productId:number)=>{
 }
 
 export const postProductService = async(data:CreateProducInput)=>{
+    const category = await prisma.category.findUnique({
+        where: {
+            id: data.categoryId
+        }
+    });
+    //check for categoryId passed from admin
+    if (!category) {
+        throw new AppError("Category not found.", 404);
+    }
     const product = await prisma.product.create({data:{
         name:data.name,
         price:data.price,
-        categoryId:1,
+        categoryId:data.categoryId,
         description:data.description,
         imageUrl:"/test-URL",  // TODO: have to make the products be able to upload some
         stock: data.stock
