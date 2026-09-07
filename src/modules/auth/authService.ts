@@ -39,7 +39,7 @@ export const loginUserService = async(data:LoginUserInput)=>{
         throw new AppError("Invalid email or password",401);
     }
     let userId = loadedUser.id;
-    generateToken(userId,loadedUser.email);
+    token = generateToken(userId,loadedUser.email);
     //returning token and user id
     return {token,userId};
 }
