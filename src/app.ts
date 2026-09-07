@@ -24,11 +24,17 @@ app.use(
     res: express.Response,
     next: express.NextFunction
   ) => {
-    const errStatus = error.statusCode;
+    let errStatus;
+    if(error.statusCode){
+      errStatus = error.statusCode;
+    }
+    else{
+      errStatus = 500;
+    }
+
     const errMsg = error.message;
 
     console.log(error);
-
     res.status(errStatus).json({ errMsg });
   }
 );
