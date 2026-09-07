@@ -47,6 +47,9 @@ export const deleteCategoryService = async(categoryId:number)=>{
         await prisma.category.delete({where:{id:categoryId}});
     }
     catch(error){
+        if(error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2003"){
+            throw new AppError("Cannot delete category because it contains products.",409);
+        }
         if(error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025"){
             throw new AppError("Category not found.",404);
         }
