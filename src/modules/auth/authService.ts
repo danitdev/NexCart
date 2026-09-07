@@ -12,11 +12,18 @@ export const signup_user = async(data:CreateUserInput)=>{
             timeCost:3,
             parallelism:4
         });
-    const user = await prisma.user.create({data:{
-        email: data.email,
-        password: hashedPass,
-        name: data.name
-    }});
-    return user;
-
+    try{
+        const user = await prisma.user.create({data:{
+            email: data.email,
+            password: hashedPass,
+            name: data.name
+        }});
+        return user;
+    }catch(error){
+        if (error instanceof Prisma.PrismaClientKnownRequestError &&
+            error.code === "P2002"){
+                throw new AppError("Email is already in use.", 409);
+            }
+        throw error;
+    }
 }
