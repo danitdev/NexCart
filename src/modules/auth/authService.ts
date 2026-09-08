@@ -17,7 +17,10 @@ export const signupUserService = async(data:CreateUserInput)=>{
         const user = await prisma.user.create({data:{
             email: data.email,
             password: hashedPass,
-            name: data.name
+            name: data.name,
+            cart:{
+                create:{}
+            }
         }});
         return user;
     }catch(error){
