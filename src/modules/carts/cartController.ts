@@ -10,7 +10,7 @@ export const getCart = async(
     next:NextFunction)=>{
         try{
             const cart = await getCartService(req.userId!);
-            res.status(200).json({cart,msg:"user created!"})
+            res.status(200).json({cart})
         }catch(err){
             if(err instanceof AppError){
                 if(!err.statusCode){
