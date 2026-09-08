@@ -9,7 +9,8 @@ export const getProcuts = async(
     res:Response,
     next:NextFunction)=>{
         try{
-            const products = await getProductsService();
+            const search = typeof req.query.search === "string" ? req.query.search : undefined;
+            const products = await getProductsService(search);
             res.status(200).json({products:products});
         }catch(err){
             if(err instanceof AppError){

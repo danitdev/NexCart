@@ -3,9 +3,16 @@ import {AppError} from "../../errors/AppError.js";
 import {Prisma} from "../../generated/prisma/client.js";
 import {CreateProducInput,UpdateProductInput} from "./productSchema.js";
 
-export const getProductsService = async()=>{
-    return await prisma.product.findMany();
-}
+export const getProductsService = async(search?:string)=>{
+    return await prisma.product.findMany({
+        where: search? {
+            OR:[
+                {name:{contains:search}},
+                {description:{contains:search}}
+            ]
+        } : undefined
+    });
+};
 export const getProductsAvailableService = async()=>{
     return await prisma.product.findMany({where:{
         stock:{
