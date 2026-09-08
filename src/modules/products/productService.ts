@@ -45,7 +45,7 @@ export const postProductService = async(data:CreateProducInput,filename?:string)
     return product;
 }
 
-export const patchProductService = async(productId:number,data:UpdateProductInput)=>{
+export const patchProductService = async(productId:number,data:UpdateProductInput,filename?:string)=>{
     try{
         if(data.categoryId !== undefined){
             const category = await prisma.category.findUnique({
@@ -62,8 +62,10 @@ export const patchProductService = async(productId:number,data:UpdateProductInpu
             where:{
                 id:productId
             },
-            data:data
-        });
+            data:{
+            ...data,
+            imageUrl: filename? `/images/${filename}` : undefined
+        }});
         return updatedProduct;
     }catch(error){
         if(error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025"){

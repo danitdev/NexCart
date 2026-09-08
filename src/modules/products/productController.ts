@@ -82,7 +82,7 @@ export const patchProduct = async(
         try{
             const productId = parseId(req.params.id);
             const data:UpdateProductInput = req.body;
-            const product = await patchProductService(productId,data);
+            const product = await patchProductService(productId,data,req.file?.filename);
             res.status(200).json({product:product,msg:"product updated."});
         }catch(err){
             if(err instanceof AppError){
