@@ -1,12 +1,19 @@
 import {prisma} from "../../lib/prisma.js";
 import {AppError} from "../../errors/AppError.js";
 import {Prisma} from "../../generated/prisma/client.js";
+<<<<<<< HEAD
 import { OrderItemScalarFieldEnum } from "../../generated/prisma/internal/prismaNamespace.js";
+=======
+>>>>>>> 7eee12a62993f9f48ed82debcd231c1a4b309f3c
 
 export const checkoutCartService = async(userId:number)=>{
     let totalCost = 0;
     //wrap the whole thing in transaction so if it failed it rollbacks all the things
+<<<<<<< HEAD
     const order = await prisma.$transaction(async(tx)=>{
+=======
+    await prisma.$transaction(async(tx)=>{
+>>>>>>> 7eee12a62993f9f48ed82debcd231c1a4b309f3c
         //finding the user cart
         const userCart = await tx.cart.findUnique({
             where:{userId},
@@ -15,9 +22,13 @@ export const checkoutCartService = async(userId:number)=>{
                     include:{
                         product:{
                             select:{
+<<<<<<< HEAD
                                 price:true,
                                 stock:true,
                                 name:true
+=======
+                                price:true
+>>>>>>> 7eee12a62993f9f48ed82debcd231c1a4b309f3c
                             }
                         }
                     }
@@ -36,6 +47,7 @@ export const checkoutCartService = async(userId:number)=>{
         })
         const order = await tx.order.create({data:{totalAmount:totalCost,userId},select:{id:true}});
         for(const item of userCart.items){
+<<<<<<< HEAD
             //check for enough stocks
             if(item.product.stock<item.quantity){
                 throw new AppError(`Not enough stock for ${item.product.name}`,400);
@@ -52,6 +64,8 @@ export const checkoutCartService = async(userId:number)=>{
                 }
             });
 
+=======
+>>>>>>> 7eee12a62993f9f48ed82debcd231c1a4b309f3c
             await tx.orderItem.create(
                 {data:{
                     price:item.product.price,
@@ -62,6 +76,10 @@ export const checkoutCartService = async(userId:number)=>{
         }
         return order;
     });
+<<<<<<< HEAD
     return order;
+=======
+
+>>>>>>> 7eee12a62993f9f48ed82debcd231c1a4b309f3c
 
 }
