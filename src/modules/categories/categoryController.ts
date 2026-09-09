@@ -2,7 +2,6 @@ import {Request,Response,NextFunction} from "express";
 import {deleteCategoryService, getCategoriesService,getCategoryService,postCategoryService, updateCategoryService} from "./categoryService.js";
 import { AppError } from "../../errors/AppError.js";
 import {parseId} from "../../utils/parseId.js";
-import { parse } from "dotenv";
 
 
 export const getCategories = async(
