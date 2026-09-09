@@ -70,27 +70,45 @@ export const addToCartService = async(userId:number,productId:number,quantity:nu
     }
 }
 export const updateCartService = async(itemId:number,userId:number,quantity:number)=>{
-    try{
-        if(quantity ===0){
-            throw new AppError("Quantity should be more that 0",400);
-        }
-        const cart =await prisma.cart.findUnique({where:{userId}});
-        if(!cart){
-            throw new AppError("Cart not found.",404);
-        }
-        const existingItem = await prisma.cartItem.findFirst({where:{id:itemId,cartId:cart.id}});
-        if(!existingItem){
-            throw new AppError("This item doesn't exist in your cart.",404);
-        }
-        const productOfItem = await prisma.product.findUnique({where:{id:existingItem.productId}});
-        if(!productOfItem){
-            throw new AppError("this item doesn't exist.",404)
-        }
-        if(quantity > productOfItem.stock ){
-            throw new AppError("Not enough stock.",400);
-        }
-        return await prisma.cartItem.update({where:{id :itemId},data:{quantity}});
-    }catch(err){
-        throw err;
+
+    if(quantity ===0){
+        throw new AppError("Quantity should be more that 0",400);
     }
+    const cart =await prisma.cart.findUnique({where:{userId}});
+    if(!cart){
+        throw new AppError("Cart not found.",404);
+    }
+    const existingItem = await prisma.cartItem.findFirst({where:{id:itemId,cartId:cart.id}});
+    if(!existingItem){
+        throw new AppError("This item doesn't exist in your cart.",404);
+    }
+    const productOfItem = await prisma.product.findUnique({where:{id:existingItem.productId}});
+    if(!productOfItem){
+        throw new AppError("this item doesn't exist.",404)
+    }
+    if(quantity > productOfItem.stock ){
+        throw new AppError("Not enough stock.",400);
+    }
+    return await prisma.cartItem.update({where:{id :itemId},data:{quantity}});
+
+}
+
+export const deleteItemFromCartService = async(userId:number,itemId:number)=>{
+    const cart = await prisma.cart.findUnique({where:{userId}});
+    if(!cart){
+        throw new AppError("The cart doesn't exist.",404);
+    }
+    const itemCart = await prisma.cartItem.findFirst({
+        where:{
+            id:itemId,
+            cartId:cart.id
+        }});
+    if(!itemCart){
+        throw new AppError("The item doesn't exist.",404);
+    }
+    await prisma.cartItem.delete({
+        where:{
+            id:itemId
+        }
+    });
 }
