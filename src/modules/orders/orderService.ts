@@ -1,11 +1,12 @@
 import {prisma} from "../../lib/prisma.js";
 import {AppError} from "../../errors/AppError.js";
 import {Prisma} from "../../generated/prisma/client.js";
+import { OrderItemScalarFieldEnum } from "../../generated/prisma/internal/prismaNamespace.js";
 
 export const checkoutCartService = async(userId:number)=>{
     let totalCost = 0;
     //wrap the whole thing in transaction so if it failed it rollbacks all the things
-    await prisma.$transaction(async(tx)=>{
+    const order = await prisma.$transaction(async(tx)=>{
         //finding the user cart
         const userCart = await tx.cart.findUnique({
             where:{userId},
@@ -14,7 +15,9 @@ export const checkoutCartService = async(userId:number)=>{
                     include:{
                         product:{
                             select:{
-                                price:true
+                                price:true,
+                                stock:true,
+                                name:true
                             }
                         }
                     }
@@ -33,6 +36,22 @@ export const checkoutCartService = async(userId:number)=>{
         })
         const order = await tx.order.create({data:{totalAmount:totalCost,userId},select:{id:true}});
         for(const item of userCart.items){
+            //check for enough stocks
+            if(item.product.stock<item.quantity){
+                throw new AppError(`Not enough stock for ${item.product.name}`,400);
+            }
+            //subtract the quantity
+            await tx.product.update({
+                where:{
+                    id:item.productId
+                },
+                data:{
+                    stock:{
+                        decrement:item.quantity
+                    }
+                }
+            });
+
             await tx.orderItem.create(
                 {data:{
                     price:item.product.price,
@@ -43,6 +62,6 @@ export const checkoutCartService = async(userId:number)=>{
         }
         return order;
     });
-
+    return order;
 
 }
