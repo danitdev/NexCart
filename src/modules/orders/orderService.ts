@@ -34,7 +34,7 @@ export const checkoutCartService = async (userId: number) => {
         userCart.items.forEach(item => {
             totalCost += Number(item.product.price) * item.quantity;
         });
-        const order = await tx.order.create({
+        const createdOrder = await tx.order.create({
             data: {
                 totalAmount: totalCost,
                 userId
@@ -66,13 +66,22 @@ export const checkoutCartService = async (userId: number) => {
                 data: {
                     price: item.product.price,
                     quantity: item.quantity,
-                    orderId: order.id,
+                    orderId: createdOrder.id,
                     productId: item.productId
                 }
             });
         }
         //emptying the cart
         await tx.cartItem.deleteMany({where:{cartId:userCart.id}});
+        //finalize the order
+        const order = await tx.order.findUnique({
+            where: {
+                id: createdOrder.id
+            },
+            include: {
+                items: true
+            }
+        });
         return order;
     });
     return order;
