@@ -1,5 +1,5 @@
 import type {Request,Response,NextFunction} from "express";
-import { addToCartService, getCartService } from "./cartService.js";
+import { addToCartService, getCartService, updateCartService } from "./cartService.js";
 import {} from "./cartSchema.js";
 import {AppError} from "../../errors/AppError.js";
 
@@ -30,6 +30,24 @@ export const addToCart = async(
             const quantity =Number(req.body.quantity);
             const cartItem = await addToCartService(req.userId!,productId,quantity);
             res.status(200).json({cartItem,msg:"added item to the cart"})
+        }catch(err){
+            if(err instanceof AppError){
+                if(!err.statusCode){
+                    err.statusCode = 500;
+                }
+            }
+            next(err);
+        }
+}
+export const updateCart = async(
+    req:Request,
+    res:Response,
+    next:NextFunction)=>{
+        try{
+            const itemId = Number(req.params.itemId);
+            const quantity = req.body.quantity;
+            const updatedCartItem = await updateCartService(itemId,req.userId!,quantity);
+            res.status(200).json({updatedCartItem,msg:"updated the item quantity."})
         }catch(err){
             if(err instanceof AppError){
                 if(!err.statusCode){
