@@ -5,6 +5,7 @@ import categoryRouter from "./modules/categories/categoryRoutes.js";
 import productRouter from "./modules/products/productRoutes.js";
 import authRouter from "./modules/auth/authRoutes.js";
 import cartRouter from "./modules/carts/cartRoutes.js";
+import orderRouter from "./modules/orders/orderRoutes.js";
 import { AppError } from "./errors/AppError.js";
 import multer from "multer";
 import __root_dir from "./utils/path.js";
@@ -48,6 +49,7 @@ app.use("/categories", categoryRouter);
 app.use("/products", productRouter);
 app.use("/auth",authRouter);
 app.use("/cart",cartRouter);
+app.use("/orders",orderRouter);
 
 // Error handling — keep this LAST
 app.use(
