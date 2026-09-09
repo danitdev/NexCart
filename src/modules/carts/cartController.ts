@@ -1,6 +1,5 @@
 import type {Request,Response,NextFunction} from "express";
 import { addToCartService, deleteItemFromCartService, getCartService, updateCartService } from "./cartService.js";
-import {} from "./cartSchema.js";
 import {AppError} from "../../errors/AppError.js";
 
 
