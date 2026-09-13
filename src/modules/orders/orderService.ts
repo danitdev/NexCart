@@ -161,3 +161,55 @@ export const updateOrderStatusByAdminService = async(orderId:number,status:Order
     }
 
 }
+
+
+export const getOrdersAdminService = async()=>{
+    const orders = await prisma.order.findMany({
+        include:{
+            items:{
+                include:{
+                    product:{
+                        select:{
+                            name:true,  
+                            price:true,
+                            imageUrl:true,
+                            category:true,
+                            
+                        }
+                    }
+                }
+            }
+        },
+        orderBy:{
+            createdAt:"desc"
+        }
+        });
+    return orders;
+};
+
+
+export const getOrderByIdAdminService = async(orderId:number) => {
+    const order = await prisma.order.findUnique({
+        where:{
+            id:orderId
+        },
+        include:{
+            items:{
+                include:{
+                    product:{
+                        select:{
+                            name:true,
+                            price:true,
+                            imageUrl:true,
+                            category:true
+                        }
+                    }
+                }
+            }
+        }
+    });
+    if(!order){
+        throw new AppError("Order not found.",404);
+    }
+    return order;
+}
