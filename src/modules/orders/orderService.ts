@@ -108,6 +108,34 @@ export const getOrdersService = async(userId:number)=>{
                 }
             }
         },
+        orderBy:{
+            createdAt:"desc"
+        }
         });
     return orders;
+}
+
+export const getOrderByIdService = async(userId:number,orderId:number)=>{
+    const order = await prisma.order.findUnique({
+        where:{
+            id:orderId,userId
+        },
+        include:{
+            items:{
+                include:{
+                    product:{
+                        select:{
+                        name: true,
+                        price: true,
+                        imageUrl: true,
+                        category: true
+                        }
+                    }
+                }
+            }
+        }});
+    if(!order){
+        throw new AppError("Order not found",404);
+    }
+    return order;
 }
