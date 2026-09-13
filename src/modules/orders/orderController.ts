@@ -1,7 +1,7 @@
 import type {Request,Response,NextFunction} from "express";
 import { AppError } from "../../errors/AppError.js";
 import {parseId} from "../../utils/parseId.js";
-import { checkoutCartService, getOrderByIdService, getOrdersService, updateOrderStatusByAdminService } from "./orderService.js";
+import { checkoutCartService, getOrderByIdAdminService, getOrderByIdService, getOrdersAdminService, getOrdersService, updateOrderStatusByAdminService } from "./orderService.js";
 
 
 export const getOrders = async(
@@ -67,6 +67,43 @@ export const updateOrderStatusByAdmin = async(
             const orderStatus = req.body.status;
             const updatedOrder = await updateOrderStatusByAdminService(orderId,orderStatus);
             res.status(200).json({updatedOrder});
+        }catch(err){
+            if(err instanceof AppError){
+                if(!err.statusCode){
+                    err.statusCode = 500;
+                }
+            }
+            next(err);
+        }
+
+};
+
+export const getOrdersAdmin = async(
+    req:Request,
+    res:Response,
+    next:NextFunction)=>{
+        try{
+            const orders = await getOrdersAdminService();
+            res.status(200).json({orders});
+        }catch(err){
+            if(err instanceof AppError){
+                if(!err.statusCode){
+                    err.statusCode = 500;
+                }
+            }
+            next(err);
+        }
+
+};
+
+export const getOrderByIdAdmin = async(
+    req:Request,
+    res:Response,
+    next:NextFunction)=>{
+        try{
+            const orderId = Number(req.params.id);
+            const order = await getOrderByIdAdminService(orderId);
+            res.status(200).json({order});
         }catch(err){
             if(err instanceof AppError){
                 if(!err.statusCode){
