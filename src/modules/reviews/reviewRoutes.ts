@@ -6,6 +6,6 @@ import { postReview } from "./reviewController.js";
 
 const router = Router();
 
-router.post("/products/:id/",isAuth,validate(postReviewSchema),postReview);
-// router.get("/products/:id/");
+router.post("/products/:id",isAuth,validate(postReviewSchema),postReview);
+router.delete("/products/:id",isAuth,);
 export default router;
