@@ -1,7 +1,7 @@
 import type {Request,Response,NextFunction} from "express";
 import { AppError } from "../../errors/AppError.js";
 import {parseId} from "../../utils/parseId.js";
-import { checkoutCartService } from "./orderService.js";
+import { checkoutCartService, getOrdersService } from "./orderService.js";
 
 
 export const getOrders = async(
@@ -9,8 +9,8 @@ export const getOrders = async(
     res:Response,
     next:NextFunction)=>{
         try{
-
-            res.status(200).json({});
+            const orders = await getOrdersService(req.userId!);
+            res.status(200).json({orders});
         }catch(err){
             if(err instanceof AppError){
                 if(!err.statusCode){
