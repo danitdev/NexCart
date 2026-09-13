@@ -1,6 +1,6 @@
 import { prisma } from "../../lib/prisma.js";
 import { AppError } from "../../errors/AppError.js";
-import { Prisma } from "../../generated/prisma/client.js";
+import { OrderStatus, Prisma } from "../../generated/prisma/client.js";
 
 export const checkoutCartService = async (userId: number) => {
     // wrap the whole thing in transaction so if it failed it rolls back all the things
@@ -138,4 +138,18 @@ export const getOrderByIdService = async(userId:number,orderId:number)=>{
         throw new AppError("Order not found",404);
     }
     return order;
+}
+
+
+
+export const updateOrderStatusByAdminService = async(orderId:number,status:OrderStatus)=>{
+    const updatedOrder = await prisma.order.update({
+        where:{
+            id:orderId
+        }
+        ,data:{
+        status
+    }})
+    return updatedOrder;
+
 }
