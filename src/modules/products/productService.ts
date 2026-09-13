@@ -26,6 +26,14 @@ export const getProductService = async(productId:number)=>{
             where:
             {
                 id:productId,
+            },
+            include:{
+                reviews:{
+                    select:{
+                        comment:true,
+                        rating:true
+                    }
+                }
             }
         });
     if(!product){
