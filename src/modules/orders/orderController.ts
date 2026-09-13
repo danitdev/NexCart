@@ -63,7 +63,7 @@ export const updateOrderStatusByAdmin = async(
     res:Response,
     next:NextFunction)=>{
         try{
-            const orderId = Number(req.params.id);
+            const orderId = parseId(req.params.id);
             const orderStatus = req.body.status;
             const updatedOrder = await updateOrderStatusByAdminService(orderId,orderStatus);
             res.status(200).json({updatedOrder});
@@ -101,7 +101,7 @@ export const getOrderByIdAdmin = async(
     res:Response,
     next:NextFunction)=>{
         try{
-            const orderId = Number(req.params.id);
+            const orderId = parseId(req.params.id);
             const order = await getOrderByIdAdminService(orderId);
             res.status(200).json({order});
         }catch(err){
