@@ -86,3 +86,28 @@ export const checkoutCartService = async (userId: number) => {
     });
     return order;
 };
+
+
+export const getOrdersService = async(userId:number)=>{
+    const orders = await prisma.order.findMany({
+        where:{
+            userId
+        },
+        include:{
+            items:{
+                include:{
+                    product:{
+                        select:{
+                            name:true,  
+                            price:true,
+                            imageUrl:true,
+                            category:true,
+                            
+                        }
+                    }
+                }
+            }
+        },
+        });
+    return orders;
+}
