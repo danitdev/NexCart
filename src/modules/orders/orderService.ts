@@ -143,13 +143,21 @@ export const getOrderByIdService = async(userId:number,orderId:number)=>{
 
 
 export const updateOrderStatusByAdminService = async(orderId:number,status:OrderStatus)=>{
-    const updatedOrder = await prisma.order.update({
-        where:{
-            id:orderId
+    try{
+        const updatedOrder = await prisma.order.update({
+            where:{
+                id:orderId
+            }
+            ,data:{
+            status
+        }})
+        return updatedOrder;
+
+    }catch(err){
+        if(err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025"){
+            throw new AppError("Order not found.", 404);
         }
-        ,data:{
-        status
-    }})
-    return updatedOrder;
+        throw err;
+    }
 
 }
