@@ -11,5 +11,5 @@ enum OrderStatus  {
 
 
 export const updateOrderStatusSchema = z.object({
-  status:z.enum(OrderStatus)  
+  status:z.enum(OrderStatus,{error:"Invalid option: expected one of PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED"})  
 })
