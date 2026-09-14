@@ -1,9 +1,13 @@
+
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 export default function LoginPage() {
+    const router = useRouter();
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -31,11 +35,13 @@ export default function LoginPage() {
             const data = await response.json();
 
             if (!response.ok) {
-                setError(data.message || "Login failed.");
+                setError(data.errMsg || "Login failed.");
                 return;
             }
 
-            console.log(data);
+            localStorage.setItem("token", data.token);
+
+            router.push("/");
 
         } catch {
             setError("Something went wrong. Please try again.");
@@ -154,3 +160,4 @@ export default function LoginPage() {
         </main>
     );
 }
+
