@@ -1,9 +1,18 @@
+import type {Product} from "../../src/types/product";
+import type {Category} from "../../src/types/category";
+
+
 export default async function Home() {
-    const response = await fetch(
+    const productResponse = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/products`
     );
-    const data = await response.json();
-    const products = data.products;
+    const categoryResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/categories`
+    );
+    const productData:{products:Product[]} = await productResponse.json();
+    const categoryData:{categories:Category[]} = await categoryResponse.json();
+    const products = productData.products;
+    const categoryies = categoryData.categories;
     // console.log(products);
     return (
         <main>
@@ -79,7 +88,7 @@ export default async function Home() {
                 </div>
 
                 <div className="product-grid">
-                    {products.map((product: any) => (
+                    {products.map((product: Product) => (
                         <article className="product-card" key={product.id}>
                             <div className="product-image">
                                 {product.imageUrl ? (
