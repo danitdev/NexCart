@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Product } from "../../../../src/types/product";
+import AddToCartButton from "../../components/AddToCartButton";
 
 type CategoryPageProps = {
     params: Promise<{
@@ -99,9 +100,7 @@ export default async function CategoryPage({
                                         ${product.price}
                                     </p>
 
-                                    <button>
-                                        Add to Cart
-                                    </button>
+                                    <AddToCartButton productId={product.id} />
                                 </div>
                             </article>
                         ))}
