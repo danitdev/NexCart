@@ -1,5 +1,5 @@
 import {Request,Response,NextFunction} from "express";
-import {deleteCategoryService, getCategoriesService,getCategoryService,postCategoryService, updateCategoryService} from "./categoryService.js";
+import {deleteCategoryService, getCategoriesService,getCategoryProductsService,postCategoryService, updateCategoryService} from "./categoryService.js";
 import { AppError } from "../../errors/AppError.js";
 import {parseId} from "../../utils/parseId.js";
 
@@ -41,14 +41,14 @@ export const postCategory = async(
         }
 };
 
-export const getCategory = async(
+export const getCategoryProducts = async(
     req:Request,
     res:Response,
     next:NextFunction)=>{
         try{
             const categoryId = parseId(req.params.id);
-            const category = await getCategoryService(categoryId);
-            res.status(200).json({category:category,msg:"found the category!"});
+            const products = await getCategoryProductsService(categoryId);
+            res.status(200).json({products,msg:"found the category!"});
 
         }
         catch(err){

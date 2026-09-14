@@ -21,12 +21,16 @@ export const postCategoryService = async(categoryName:string)=>{
 
 }
 
-export const getCategoryService = async(categoryId:number)=>{
+export const getCategoryProductsService = async(categoryId:number)=>{
     const category =  await prisma.category.findUnique({where:{id:categoryId}});
     if(!category){
         throw new AppError("This Shit doesn't exist!",404);
     }
-    return category;
+    const products = await prisma.product.findMany({
+        where:{categoryId:categoryId}
+    })
+    console.log(products);
+    return products;
 }
 export const updateCategoryService = async(categoryId:number,categoryName:string)=>{
     try{
