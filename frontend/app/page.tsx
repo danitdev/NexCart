@@ -1,6 +1,7 @@
+import Link from "next/link";
 import type {Product} from "../../src/types/product";
 import type {Category} from "../../src/types/category";
-
+import AddToCartButton from "./components/AddToCartButton";
 
 export default async function Home() {
     const productResponse = await fetch(
@@ -9,25 +10,36 @@ export default async function Home() {
     const categoryResponse = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/categories`
     );
+
     const productData:{products:Product[]} = await productResponse.json();
     const categoryData:{categories:Category[]} = await categoryResponse.json();
+
     const products = productData.products;
-    const categoryies = categoryData.categories;
-    // console.log(products);
+    const categories = categoryData.categories;
+
     return (
         <main>
             <header className="navbar">
-                <div className="logo">NexCart</div>
+                <div className="logo">
+                    <Link href="/">NexCart</Link>
+                </div>
 
                 <nav>
-                    <a href="#">Products</a>
-                    <a href="#">Categories</a>
-                    <a href="#">Orders</a>
+                    <Link href="/products">Products</Link>
+                    <Link href="/categories">Categories</Link>
+                    <Link href="/orders">Orders</Link>
                 </nav>
 
                 <div className="nav-actions">
-                    <a href="#">Login</a>
-                    <button>Cart</button>
+                    <Link href="/login">Login</Link>
+
+                    <Link href="/register" className="register-button">
+                        Register
+                    </Link>
+
+                    <Link href="/cart" className="cart-button">
+                        Cart
+                    </Link>
                 </div>
             </header>
 
@@ -46,50 +58,52 @@ export default async function Home() {
                         and get everything you need in one place.
                     </p>
 
-                    <button className="hero-button">
+                    <Link
+                        href="/products"
+                        className="hero-button"
+                    >
                         Browse Products
-                    </button>
+                    </Link>
                 </div>
             </section>
 
             <section className="categories">
                 <div className="section-header">
                     <h2>Categories</h2>
-                    <a href="#">View all →</a>
+
+                    <Link href="/categories">
+                        View all →
+                    </Link>
                 </div>
 
                 <div className="category-grid">
-                    <div className="category-card">
-                        <h3>Electronics</h3>
-                        <p>Phones, laptops and more</p>
-                    </div>
-
-                    <div className="category-card">
-                        <h3>Gaming</h3>
-                        <p>Games and gaming gear</p>
-                    </div>
-
-                    <div className="category-card">
-                        <h3>Clothing</h3>
-                        <p>Find your style</p>
-                    </div>
-
-                    <div className="category-card">
-                        <h3>Accessories</h3>
-                        <p>Complete your setup</p>
-                    </div>
+                    {categories.map((category) => (
+                        <Link
+                            href={`/categories/${category.id}`}
+                            className="category-card"
+                            key={category.id}
+                        >
+                            <h3>{category.name}</h3>
+                        </Link>
+                    ))}
                 </div>
             </section>
 
             <section className="products">
                 <div className="section-header">
                     <h2>Featured Products</h2>
-                    <a href="#">View all →</a>
+
+                    <Link href="/products">
+                        View all →
+                    </Link>
                 </div>
 
                 <div className="product-grid">
                     {products.map((product: Product) => (
-                        <article className="product-card" key={product.id}>
+                        <article
+                            className="product-card"
+                            key={product.id}
+                        >
                             <div className="product-image">
                                 {product.imageUrl ? (
                                     <img
@@ -112,7 +126,7 @@ export default async function Home() {
                                     ${product.price}
                                 </p>
 
-                                <button>Add to Cart</button>
+                                <AddToCartButton productId={product.id} />
                             </div>
                         </article>
                     ))}
@@ -125,4 +139,3 @@ export default async function Home() {
         </main>
     );
 }
-
