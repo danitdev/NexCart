@@ -1,4 +1,4 @@
-import { AppError } from "../errors/AppError";
+import { AppError } from "../errors/AppError.js";
 
 export const parseId = (id:string|string[]):number=>{
     if(Array.isArray(id)){
