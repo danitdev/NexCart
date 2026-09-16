@@ -24,6 +24,8 @@ jobs:
         run: npm ci
 
       - name: Generate Prisma client
+        env:
+          DATABASE_URL: mysql://ci:ci@localhost:3306/nexcart
         run: npx prisma generate
 
       - name: Type check
