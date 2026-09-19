@@ -1,5 +1,5 @@
 import type {Request,Response,NextFunction} from "express";
-import {forgotPasswordService, loginUserService, signupUserService} from "./authService.js";
+import {forgotPasswordService, loginUserService, resetPasswordService, signupUserService} from "./authService.js";
 import {CreateUserInput,LoginUserInput} from "./authSchema.js";
 import {AppError} from "../../errors/AppError.js";
 
@@ -45,8 +45,30 @@ export const forgotPassword = async(
     next:NextFunction)=>{
         try{   
             const email = req.body.email;
-            const {message,token} = await forgotPasswordService(email);
-            res.status(200).json({message,token}); 
+            const {message,url,token} = await forgotPasswordService(email);
+            res.status(200).json({message,url}); 
+        }catch(err){
+            if(err instanceof AppError){
+                if(!err.statusCode){
+                    err.statusCode = 500;
+                }
+            }
+            next(err);
+        }
+}
+
+export const resetPassword = async(
+    req:Request,
+    res:Response,
+    next:NextFunction)=>{
+        try{   
+            const newPassword = req.body.password;
+            const token = req.query.token;
+            if(typeof token !== "string"){
+                throw new AppError("Invalid reset token",400);
+            }
+            const msg = await resetPasswordService(token,newPassword);
+            res.status(200).json({msg});
         }catch(err){
             if(err instanceof AppError){
                 if(!err.statusCode){
