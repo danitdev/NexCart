@@ -10,7 +10,11 @@ export const getProcuts = async(
     next:NextFunction)=>{
         try{
             const search = typeof req.query.search === "string" ? req.query.search : undefined;
-            const products = await getProductsService(search);
+            const category = typeof req.query.categoryId === "string" ? req.query.categoryId : undefined;
+            const priceMin = typeof req.query.minPrice === "string" ? req.query.minPrice : undefined;
+            const priceMax = typeof req.query.maxPrice === "string" ? req.query.maxPrice : undefined;
+
+            const products = await getProductsService(search,category,priceMin,priceMax);
             res.status(200).json({products:products});
         }catch(err){
             if(err instanceof AppError){
