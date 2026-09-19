@@ -1,5 +1,5 @@
 import {Request,Response,NextFunction} from "express";
-import { deleteProductService, getProductsAvailableService, getProductService, getProductsService, patchProductService, postProductService } from "./productService.js";
+import { deleteProductService, getProductService, getProductsService, patchProductService, postProductService } from "./productService.js";
 import { AppError } from "../../errors/AppError.js";
 import {CreateProducInput,UpdateProductInput} from "./productSchema.js";
 import {parseId} from "../../utils/parseId.js";
@@ -13,8 +13,9 @@ export const getProcuts = async(
             const category = typeof req.query.categoryId === "string" ? req.query.categoryId : undefined;
             const priceMin = typeof req.query.minPrice === "string" ? req.query.minPrice : undefined;
             const priceMax = typeof req.query.maxPrice === "string" ? req.query.maxPrice : undefined;
+            const available = typeof req.query.available === "string" ? req.query.available : undefined;
 
-            const products = await getProductsService(search,category,priceMin,priceMax);
+            const products = await getProductsService(search,category,priceMin,priceMax,available);
             res.status(200).json({products:products});
         }catch(err){
             if(err instanceof AppError){
@@ -26,22 +27,6 @@ export const getProcuts = async(
         }
 }
 
-export const getProcutsAvailable = async(
-    req:Request,
-    res:Response,
-    next:NextFunction)=>{
-        try{
-            const products = await getProductsAvailableService();
-            res.status(200).json({products:products});
-        }catch(err){
-            if(err instanceof AppError){
-                if(!err.statusCode){
-                    err.statusCode = 500;
-                }
-            }
-            next(err);
-        }
-}
 
 export const getProduct = async(
     req:Request,
