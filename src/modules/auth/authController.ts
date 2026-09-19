@@ -1,5 +1,5 @@
 import type {Request,Response,NextFunction} from "express";
-import {forgotPasswordService, loginUserService, resetPasswordService, signupUserService} from "./authService.js";
+import {forgotPasswordService, getMeService, loginUserService, resetPasswordService, signupUserService} from "./authService.js";
 import {CreateUserInput,LoginUserInput} from "./authSchema.js";
 import {AppError} from "../../errors/AppError.js";
 
@@ -69,6 +69,23 @@ export const resetPassword = async(
             }
             const msg = await resetPasswordService(token,newPassword);
             res.status(200).json({msg});
+        }catch(err){
+            if(err instanceof AppError){
+                if(!err.statusCode){
+                    err.statusCode = 500;
+                }
+            }
+            next(err);
+        }
+}
+
+export const getMe = async(
+    req:Request,
+    res:Response,
+    next:NextFunction)=>{
+        try{   
+            const user = await getMeService(req.userId!);
+            res.status(200).json({user});
         }catch(err){
             if(err instanceof AppError){
                 if(!err.statusCode){
