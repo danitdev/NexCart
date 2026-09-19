@@ -6,6 +6,7 @@ import argon2 from "argon2";
 import {generateToken} from "../../utils/auth.js";
 import { generateResetToken } from "../../utils/resetToken.js";
 import crypto from "node:crypto"
+import { urlHostnameOk } from "zod/v4/core";
 
 
 export const signupUserService = async(data:CreateUserInput)=>{
@@ -106,4 +107,21 @@ export const resetPasswordService = async(token:string,newPass:string)=>{
     return {
     message: "Password reset successfully."
     };
+}
+
+export const getMeService = async(userId:number)=>{
+    const user = await prisma.user.findUnique({
+        where:{id:userId},
+        select:{
+            id:true,
+            email:true,
+            name:true,
+            role:true,
+            createdAt:true
+        }
+    });
+    if(!user){
+        throw new AppError("User not found.",404);
+    }
+    return user;
 }
