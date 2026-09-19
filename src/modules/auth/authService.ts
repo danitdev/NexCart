@@ -5,6 +5,7 @@ import {CreateUserInput,LoginUserInput} from "./authSchema.js";
 import argon2 from "argon2";
 import {generateToken} from "../../utils/auth.js";
 import { generateResetToken } from "../../utils/resetToken.js";
+import crypto from "node:crypto"
 
 
 export const signupUserService = async(data:CreateUserInput)=>{
@@ -69,9 +70,40 @@ export const forgotPasswordService = async(email:string)=>{
             )
         }
     });
+    let url = "http://localhost:8080/auth/reset-password?token"+token;
     return{
         message:"If the email exists, a reset token has been generated.",
+        url,
         token
     }
 
+}
+
+export const resetPasswordService = async(token:string,newPass:string)=>{
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    const user = await prisma.user.findFirst({
+        where:{
+            passwordResetToken:hashedToken,
+            passwordResetExpiresAt:{
+                gt:new Date()
+            }
+        }
+    });
+    if(!user){
+        throw new AppError("Invalid or expired token.",401);
+    }
+    const hashedPass = await argon2.hash(newPass,{type: argon2.argon2id,memoryCost: 65536,timeCost:3,parallelism:4});
+    await prisma.user.update({
+        where:{
+            id:user.id
+        },
+        data:{
+            password:hashedPass,
+            passwordResetExpiresAt:null,
+            passwordResetToken:null
+        }
+    });
+    return {
+    message: "Password reset successfully."
+    };
 }
