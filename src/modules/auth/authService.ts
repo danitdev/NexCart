@@ -4,6 +4,8 @@ import {Prisma} from "../../generated/prisma/client.js";
 import {CreateUserInput,LoginUserInput} from "./authSchema.js";
 import argon2 from "argon2";
 import {generateToken} from "../../utils/auth.js";
+import { generateResetToken } from "../../utils/resetToken.js";
+
 
 export const signupUserService = async(data:CreateUserInput)=>{
     const hashedPass = await argon2.hash(data.password,
@@ -45,4 +47,31 @@ export const loginUserService = async(data:LoginUserInput)=>{
     token = generateToken(userId,loadedUser.email);
     //returning token and user id
     return {token,userId};
+}
+
+export const forgotPasswordService = async(email:string)=>{
+    
+    const user = await prisma.user.findUnique({
+        where:{email}
+    });
+    if(!user){
+        throw new AppError("User not found",404);
+    }
+    const {token , hashedToken} = generateResetToken();
+    await prisma.user.update({
+        where:{
+            id:user.id
+        },
+        data:{
+            passwordResetToken: hashedToken,
+            passwordResetExpiresAt: new Date(
+                Date.now()+15*60*1000
+            )
+        }
+    });
+    return{
+        message:"If the email exists, a reset token has been generated.",
+        token
+    }
+
 }
