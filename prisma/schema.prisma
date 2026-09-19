@@ -27,6 +27,8 @@ model User{
   role Role @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  passwordResetToken String?
+  passwordResetExpiresAt DateTime?
 
   cart Cart?
   orders Order[]
