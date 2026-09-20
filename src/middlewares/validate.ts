@@ -26,3 +26,19 @@ export const validate = (schema: ZodType) => {
         next();
     };
 };
+export const validateQuery = (schema: ZodType)=>{
+    return (req:Request,res:Response,next:NextFunction)=>{
+        const result = schema.safeParse(req.query);
+        if(!result.success){
+            const errors = result.error.flatten();
+            const message = Object.values(errors.fieldErrors)
+                .flat()
+                .filter((error):error is string => error !== undefined)[0];
+            console.log(errors);
+            throw new AppError(message ?? "Validation failed.",422);
+        }
+        Object.assign(req.query,result.data);
+        next();
+
+    }
+}
