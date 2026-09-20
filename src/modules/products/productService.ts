@@ -3,7 +3,7 @@ import {AppError} from "../../errors/AppError.js";
 import {Prisma} from "../../generated/prisma/client.js";
 import {CreateProducInput,UpdateProductInput} from "./productSchema.js";
 
-export const getProductsService = async(search?:string,category?:string,priceMin?:string,priceMax?:string,available?:string)=>{
+export const getProductsService = async(page:number,limit:number,search?:string,category?:string,priceMin?:string,priceMax?:string,available?:string)=>{
     const priceFilter = {
         ...(priceMin && {
             gte:Number(priceMin)
@@ -30,7 +30,11 @@ export const getProductsService = async(search?:string,category?:string,priceMin
             ...(available && {
                 stock:{gt:0}
             })
-        }
+        },
+        ...({
+            skip:(page-1)*limit,
+            take:limit
+        })
     });
 };
 

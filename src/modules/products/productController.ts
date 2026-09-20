@@ -14,8 +14,10 @@ export const getProcuts = async(
             const priceMin = typeof req.query.minPrice === "string" ? req.query.minPrice : undefined;
             const priceMax = typeof req.query.maxPrice === "string" ? req.query.maxPrice : undefined;
             const available = typeof req.query.available === "string" ? req.query.available : undefined;
-
-            const products = await getProductsService(search,category,priceMin,priceMax,available);
+            const page = Number(typeof req.query.page === "string" ? Number(req.query.page) : 1);
+            const limit = Number(typeof req.query.limit === "string" ? Number(req.query.limit) : 10);
+            
+            const products = await getProductsService(page,limit,search,category,priceMin,priceMax,available);
             res.status(200).json({products:products});
         }catch(err){
             if(err instanceof AppError){
